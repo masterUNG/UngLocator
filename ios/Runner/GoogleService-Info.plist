@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>385222479315-60rnbhiht6gcanu22jcmia5hu1nd8fhv.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.385222479315-60rnbhiht6gcanu22jcmia5hu1nd8fhv</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB1Wdc8PCTudsEjT9M4caVTATOxuBGlOtM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>385222479315</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>th.in.androidthai.ungLocator</string>
+	<key>PROJECT_ID</key>
+	<string>unglocator</string>
+	<key>STORAGE_BUCKET</key>
+	<string>unglocator.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:385222479315:ios:425caae8112e8a1a4ef326</string>
+	<key>DATABASE_URL</key>
+	<string>https://unglocator.firebaseio.com</string>
+</dict>
+</plist>
