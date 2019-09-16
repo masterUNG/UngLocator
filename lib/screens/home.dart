@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ung_locator/screens/my_style.dart';
+import 'package:ung_locator/screens/register.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,7 +19,10 @@ class _HomeState extends State<Home> {
           'Sign Up',
           style: TextStyle(color: Colors.red[800]),
         ),
-        onPressed: () {},
+        onPressed: () {
+          MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Register());
+          Navigator.of(context).push(materialPageRoute);
+        },
       ),
     );
   }
@@ -103,7 +108,7 @@ class _HomeState extends State<Home> {
         child: Container(
           decoration: BoxDecoration(
             gradient: RadialGradient(
-              colors: [Colors.white, Colors.green[400]],radius: 1.0,
+              colors: [Colors.white, MyStyle().myMainColor],radius: 1.0,
             ),
           ),
           child: Center(
