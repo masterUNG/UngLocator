@@ -8,6 +8,8 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   // Explicit
+  final formKey = GlobalKey<FormState>();
+  String nameString = '', emailString = '', passwordString = '';
 
   // Method
   Widget nameText() {
@@ -22,12 +24,15 @@ class _RegisterState extends State<Register> {
         labelStyle: TextStyle(color: Colors.pink),
         helperText: 'Type Your Name',
         helperStyle: TextStyle(color: Colors.pink),
-      ),
+      ),onSaved: (String value){
+        nameString = value.trim();
+      },
     );
   }
 
   Widget emailText() {
-    return TextFormField(keyboardType: TextInputType.emailAddress,
+    return TextFormField(
+      keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         icon: Icon(
           Icons.email,
@@ -38,7 +43,9 @@ class _RegisterState extends State<Register> {
         labelStyle: TextStyle(color: Colors.greenAccent[700]),
         helperText: 'Type Your Email',
         helperStyle: TextStyle(color: Colors.greenAccent[700]),
-      ),
+      ),onSaved: (String value){
+        emailString = value.trim();
+      },
     );
   }
 
@@ -54,23 +61,32 @@ class _RegisterState extends State<Register> {
         labelStyle: TextStyle(color: Colors.purple),
         helperText: 'Type Password',
         helperStyle: TextStyle(color: Colors.purple),
-      ),
+      ),onSaved: (String value){
+        passwordString = value.trim();
+      },
     );
   }
 
   Widget content() {
-    return ListView(
-      padding: EdgeInsets.all(50.0),
-      children: <Widget>[
-        nameText(),emailText(), passwordText(),
-      ],
+    return Form(key: formKey,
+      child: ListView(
+        padding: EdgeInsets.all(50.0),
+        children: <Widget>[
+          nameText(),
+          emailText(),
+          passwordText(),
+        ],
+      ),
     );
   }
 
   Widget registerButton() {
     return IconButton(
       icon: Icon(Icons.cloud_upload),
-      onPressed: () {},
+      onPressed: () {
+        formKey.currentState.save();
+        print('name = $nameString, email = $emailString, password = $passwordString');
+      },
     );
   }
 
