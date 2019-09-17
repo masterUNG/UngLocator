@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ung_locator/screens/home.dart';
+import 'package:ung_locator/screens/information.dart';
 import 'package:ung_locator/screens/my_style.dart';
+import 'package:ung_locator/screens/show_list_food.dart';
 
 class MyService extends StatefulWidget {
   @override
@@ -12,6 +14,7 @@ class _MyServiceState extends State<MyService> {
   // Explicit
   String loginString = '';
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  Widget currentWidget = ShowListFood();
 
   // Method
   @override
@@ -43,8 +46,10 @@ class _MyServiceState extends State<MyService> {
 
   Future<void> mySignOut() async {
     await firebaseAuth.signOut().then((response) {
-      MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Home());
-      Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => Home());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
     });
   }
 
@@ -55,7 +60,12 @@ class _MyServiceState extends State<MyService> {
         color: Colors.blue,
       ),
       title: Text('Information'),
-      subtitle: Text('Information of User Login'),
+      subtitle: Text('Information of User Login'),onTap: (){
+        setState(() {
+          currentWidget = Information();
+        });
+        Navigator.of(context).pop();
+      },
     );
   }
 
@@ -67,6 +77,12 @@ class _MyServiceState extends State<MyService> {
       ),
       title: Text('Show List Food'),
       subtitle: Text('Show All Food in Ung Locator'),
+      onTap: () {
+        setState(() {
+          currentWidget = ShowListFood();
+        });
+        Navigator.of(context).pop();
+      },
     );
   }
 
@@ -136,7 +152,7 @@ class _MyServiceState extends State<MyService> {
         backgroundColor: MyStyle().myMainColor,
         title: Text('My Service'),
       ),
-      body: Text('body'),
+      body: currentWidget,
       drawer: myDrawerMenu(),
     );
   }
