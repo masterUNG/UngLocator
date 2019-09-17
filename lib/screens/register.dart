@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ung_locator/screens/my_services.dart';
 import 'package:ung_locator/screens/my_style.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -24,7 +26,8 @@ class _RegisterState extends State<Register> {
         labelStyle: TextStyle(color: Colors.pink),
         helperText: 'Type Your Name',
         helperStyle: TextStyle(color: Colors.pink),
-      ),onSaved: (String value){
+      ),
+      onSaved: (String value) {
         nameString = value.trim();
       },
     );
@@ -43,7 +46,8 @@ class _RegisterState extends State<Register> {
         labelStyle: TextStyle(color: Colors.greenAccent[700]),
         helperText: 'Type Your Email',
         helperStyle: TextStyle(color: Colors.greenAccent[700]),
-      ),onSaved: (String value){
+      ),
+      onSaved: (String value) {
         emailString = value.trim();
       },
     );
@@ -61,14 +65,16 @@ class _RegisterState extends State<Register> {
         labelStyle: TextStyle(color: Colors.purple),
         helperText: 'Type Password',
         helperStyle: TextStyle(color: Colors.purple),
-      ),onSaved: (String value){
+      ),
+      onSaved: (String value) {
         passwordString = value.trim();
       },
     );
   }
 
   Widget content() {
-    return Form(key: formKey,
+    return Form(
+      key: formKey,
       child: ListView(
         padding: EdgeInsets.all(50.0),
         children: <Widget>[
@@ -85,9 +91,66 @@ class _RegisterState extends State<Register> {
       icon: Icon(Icons.cloud_upload),
       onPressed: () {
         formKey.currentState.save();
-        print('name = $nameString, email = $emailString, password = $passwordString');
+        print(
+            'name = $nameString, email = $emailString, password = $passwordString');
+        registerThread();
       },
     );
+  }
+
+  Future<void> registerThread() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .createUserWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((response) {
+      print('Register Success');
+      setupDisplayName();
+    }).catchError((response) {
+      String title = response.code;
+      String message = response.message;
+      print('title = $title, message = $message');
+      myAlert(title, message);
+    });
+  }
+
+  void myAlert(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: ListTile(
+            leading: Icon(
+              Icons.add_alert,
+              color: Colors.red,size: 36.0,
+            ),
+            title: Text(title),
+          ),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> setupDisplayName() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+    userUpdateInfo.displayName = nameString;
+    firebaseUser.updateProfile(userUpdateInfo);
+
+    MaterialPageRoute materialPageRoute =
+        MaterialPageRoute(builder: (BuildContext context) => MyService());
+    Navigator.of(context)
+        .pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
   }
 
   @override
