@@ -11,24 +11,27 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // Explicit
+  final formKey = GlobalKey<FormState>();
+  String emailString = '', passwordString = '';
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Method
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     checkStatus();
   }
 
-  Future<void> checkStatus()async{
+  Future<void> checkStatus() async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     FirebaseUser firebaseUser = await firebaseAuth.currentUser();
     if (firebaseUser != null) {
-
-      MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => MyService());
-      Navigator.of(context).pushAndRemoveUntil(materialPageRoute, (Route<dynamic> route) => false);
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
     }
   }
-
 
   Widget signUpButton() {
     return Expanded(
@@ -39,7 +42,8 @@ class _HomeState extends State<Home> {
           style: TextStyle(color: Colors.red[800]),
         ),
         onPressed: () {
-          MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Register());
+          MaterialPageRoute materialPageRoute =
+              MaterialPageRoute(builder: (BuildContext context) => Register());
           Navigator.of(context).push(materialPageRoute);
         },
       ),
@@ -54,9 +58,42 @@ class _HomeState extends State<Home> {
           'Sign In',
           style: TextStyle(color: Colors.white),
         ),
+        onPressed: () {
+          formKey.currentState.save();
+          print('email = $emailString, password = $passwordString');
+          checkAuthen();
+        },
+      ),
+    );
+  }
+
+  Future<void> checkAuthen() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .signInWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((response) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }).catchError((response) {
+      String message = response.message;
+      mySnackBar(message);
+    });
+  }
+
+  void mySnackBar(String message) {
+    SnackBar snackBar = SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 8),
+      backgroundColor: MyStyle().myTextColor,
+      action: SnackBarAction(
+        label: 'Close',
         onPressed: () {},
       ),
     );
+    scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   Widget showButton() {
@@ -81,9 +118,15 @@ class _HomeState extends State<Home> {
       child: TextFormField(
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
-          icon: Icon(Icons.email, color: Colors.red[800],),
+          icon: Icon(
+            Icons.email,
+            color: Colors.red[800],
+          ),
           labelText: 'Email :',
         ),
+        onSaved: (String value) {
+          emailString = value.trim();
+        },
       ),
     );
   }
@@ -94,9 +137,15 @@ class _HomeState extends State<Home> {
       child: TextFormField(
         obscureText: true,
         decoration: InputDecoration(
-          icon: Icon(Icons.lock, color: Colors.red[800],),
+          icon: Icon(
+            Icons.lock,
+            color: Colors.red[800],
+          ),
           labelText: 'Password :',
         ),
+        onSaved: (String value) {
+          passwordString = value.trim();
+        },
       ),
     );
   }
@@ -123,26 +172,31 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
             gradient: RadialGradient(
-              colors: [Colors.white, MyStyle().myMainColor],radius: 1.0,
+              colors: [Colors.white, MyStyle().myMainColor],
+              radius: 1.0,
             ),
           ),
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                showLogo(),
-                showAppName(),
-                emailText(),
-                passwordText(),
-                SizedBox(
-                  height: 16.0,
-                ),
-                showButton(),
-              ],
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  showLogo(),
+                  showAppName(),
+                  emailText(),
+                  passwordText(),
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  showButton(),
+                ],
+              ),
             ),
           ),
         ),
