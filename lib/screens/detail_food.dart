@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ung_locator/models/food_model.dart';
 import 'package:ung_locator/screens/my_style.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DetailFood extends StatefulWidget {
   final FoodModel foodModel;
@@ -13,6 +14,8 @@ class DetailFood extends StatefulWidget {
 class _DetailFoodState extends State<DetailFood> {
   // Explicit
   FoodModel myFoodModel;
+  static const LatLng centerMap = const LatLng(13.667765, 100.621888);
+  CameraPosition cameraPosition = CameraPosition(target: centerMap, zoom: 16);
 
   // Method
   @override
@@ -86,6 +89,18 @@ class _DetailFoodState extends State<DetailFood> {
     );
   }
 
+  Widget showMap() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.6,
+      height: MediaQuery.of(context).size.width * 0.6,
+      child: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: cameraPosition,
+        onMapCreated: (GoogleMapController googleMapController) {},
+      ),
+    );
+  }
+
   Widget showDetail() {
     return ListView(
       padding: EdgeInsets.all(20.0),
@@ -93,13 +108,22 @@ class _DetailFoodState extends State<DetailFood> {
         showNameFood(),
         showImageFood(),
         showNameShop(),
-        SizedBox(height: 8.0,),
+        SizedBox(
+          height: 8.0,
+        ),
         showAddressShop(),
-        SizedBox(height: 8.0,),
+        SizedBox(
+          height: 8.0,
+        ),
         showTimeShop(),
-        SizedBox(height: 8.0,),
+        SizedBox(
+          height: 8.0,
+        ),
         showDetailFood(),
-        SizedBox(height: 8.0,),
+        SizedBox(
+          height: 16.0,
+        ),
+        showMap(),
       ],
     );
   }
