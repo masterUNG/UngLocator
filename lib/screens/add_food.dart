@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddFood extends StatefulWidget {
   @override
@@ -7,6 +10,7 @@ class AddFood extends StatefulWidget {
 
 class _AddFoodState extends State<AddFood> {
   // Explicit
+  File file;
 
   // Method
   Widget nameFoodText() {
@@ -81,7 +85,7 @@ class _AddFoodState extends State<AddFood> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.6,
       height: MediaQuery.of(context).size.width * 0.5,
-      child: Image.asset('images/food.png'),
+      child: file == null ? Image.asset('images/food.png') : Image.file(file),
     );
   }
 
@@ -91,9 +95,18 @@ class _AddFoodState extends State<AddFood> {
       child: RaisedButton.icon(
         icon: Icon(Icons.image),
         label: Text('Choose Image Food'),
-        onPressed: () {},
+        onPressed: () {
+          chooseImageThread();
+        },
       ),
     );
+  }
+
+  Future<void> chooseImageThread() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      file = image;
+    });
   }
 
   Widget showLat() {
@@ -127,7 +140,11 @@ class _AddFoodState extends State<AddFood> {
           height: 16,
         ),
         galleryButton(),
-        SizedBox(height: 16.0,), showLat(), showLng(),
+        SizedBox(
+          height: 16.0,
+        ),
+        showLat(),
+        showLng(),
       ],
     );
   }
