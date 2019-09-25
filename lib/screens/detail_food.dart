@@ -93,9 +93,13 @@ class _DetailFoodState extends State<DetailFood> {
         showNameFood(),
         showImageFood(),
         showNameShop(),
+        SizedBox(height: 8.0,),
         showAddressShop(),
+        SizedBox(height: 8.0,),
         showTimeShop(),
+        SizedBox(height: 8.0,),
         showDetailFood(),
+        SizedBox(height: 8.0,),
       ],
     );
   }
