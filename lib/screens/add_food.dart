@@ -31,7 +31,9 @@ class _AddFoodState extends State<AddFood> {
       validator: (String value) {
         if (value.isEmpty) {
           return 'กรุณา กรอก ชื่ออาหาร ด้วยคะ';
-        } else {}
+        } else {
+          return null;
+        }
       },
       onSaved: (String value) {},
     );
@@ -54,7 +56,9 @@ class _AddFoodState extends State<AddFood> {
       validator: (String value) {
         if (value.isEmpty) {
           return 'กรุณา กรอก ชื่อร้านอาหาร ด้วยคะ';
-        } else {}
+        } else {
+          return null;
+        }
       },
       onSaved: (String value) {},
     );
@@ -79,7 +83,9 @@ class _AddFoodState extends State<AddFood> {
       validator: (String value) {
         if (value.isEmpty) {
           return 'กรุณา กรอก ที่อยู่ ด้วยคะ';
-        } else {}
+        } else {
+          return null;
+        }
       },
       onSaved: (String value) {},
     );
@@ -91,20 +97,24 @@ class _AddFoodState extends State<AddFood> {
       keyboardType: TextInputType.multiline,
       maxLines: 5,
       decoration: InputDecoration(
-          icon: Icon(
-            Icons.details,
-            color: color,
-            size: 36.0,
-          ),
-          labelText: 'รายละเอียด อาหาร',
-          labelStyle: TextStyle(color: color),
-          helperText: 'กรุณากรอก รายละอียด ของ อาหาร',
-          helperStyle: TextStyle(color: color),),validator: (String value) {
+        icon: Icon(
+          Icons.details,
+          color: color,
+          size: 36.0,
+        ),
+        labelText: 'รายละเอียด อาหาร',
+        labelStyle: TextStyle(color: color),
+        helperText: 'กรุณากรอก รายละอียด ของ อาหาร',
+        helperStyle: TextStyle(color: color),
+      ),
+      validator: (String value) {
         if (value.isEmpty) {
           return 'กรุณา กรอก รายละเอียด ด้วยคะ';
         } else {
+          return null;
         }
-      },onSaved: (String value){},
+      },
+      onSaved: (String value) {},
     );
   }
 
@@ -159,9 +169,37 @@ class _AddFoodState extends State<AddFood> {
         onPressed: () {
           if (formKey.currentState.validate()) {
             formKey.currentState.save();
+            if (file == null) {
+              myAlert('ยั่งไม่ได้ เลือกรูปภาพอาหาร คะ');
+            } else {
+              // upload
+              
+            }
+          } else {
+            myAlert('กรอกข้อมูล ไม่ครบ คะ');
           }
         },
       ),
+    );
+  }
+
+  void myAlert(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('มีความ ผิดปกติ เกิดขึ้น'),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
     );
   }
 
