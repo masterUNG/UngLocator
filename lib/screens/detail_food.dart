@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:ung_locator/models/food_model.dart';
 import 'package:ung_locator/screens/my_style.dart';
@@ -14,8 +16,7 @@ class DetailFood extends StatefulWidget {
 class _DetailFoodState extends State<DetailFood> {
   // Explicit
   FoodModel myFoodModel;
-  static const LatLng centerMap = const LatLng(13.667765, 100.621888);
-  CameraPosition cameraPosition = CameraPosition(target: centerMap, zoom: 16);
+  double lat = 0, lng = 0;
 
   // Method
   @override
@@ -23,6 +24,8 @@ class _DetailFoodState extends State<DetailFood> {
     super.initState();
     setState(() {
       myFoodModel = widget.foodModel;
+      lat = double.parse(myFoodModel.lat);
+      lng = double.parse(myFoodModel.lng);
     });
   }
 
@@ -89,7 +92,24 @@ class _DetailFoodState extends State<DetailFood> {
     );
   }
 
+  Set<Marker> myMarker() {
+    LatLng latLng = LatLng(lat, lng);
+
+    return <Marker>[
+      Marker(
+          position: latLng,
+          markerId: MarkerId('shop'),
+          infoWindow: InfoWindow(
+            title: myFoodModel.nameShop,
+            snippet: myFoodModel.address,
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(280.0)),
+    ].toSet();
+  }
+
   Widget showMap() {
+    LatLng centerMap = LatLng(lat, lng);
+    CameraPosition cameraPosition = CameraPosition(target: centerMap, zoom: 16);
     return Container(
       width: MediaQuery.of(context).size.width * 0.6,
       height: MediaQuery.of(context).size.width * 0.6,
@@ -97,6 +117,18 @@ class _DetailFoodState extends State<DetailFood> {
         mapType: MapType.normal,
         initialCameraPosition: cameraPosition,
         onMapCreated: (GoogleMapController googleMapController) {},
+        markers: myMarker(),
+      ),
+    );
+  }
+
+  Widget showPost() {
+    return Text(
+      'Post by ${myFoodModel.postBy}',
+      style: TextStyle(
+        fontSize: MyStyle().h1,
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -124,6 +156,10 @@ class _DetailFoodState extends State<DetailFood> {
           height: 16.0,
         ),
         showMap(),
+        SizedBox(
+          height: 16,
+        ),
+        showPost(),
       ],
     );
   }
