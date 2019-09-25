@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ung_locator/screens/add_food.dart';
 import 'package:ung_locator/screens/home.dart';
 import 'package:ung_locator/screens/information.dart';
 import 'package:ung_locator/screens/my_style.dart';
@@ -60,9 +61,27 @@ class _MyServiceState extends State<MyService> {
         color: Colors.blue,
       ),
       title: Text('Information'),
-      subtitle: Text('Information of User Login'),onTap: (){
+      subtitle: Text('Information of User Login'),
+      onTap: () {
         setState(() {
           currentWidget = Information();
+        });
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget menuAddFood() {
+    return ListTile(
+      leading: Icon(
+        Icons.add_circle,
+        color: Colors.purple,
+      ),
+      title: Text('เพิ่มอาหาร'),
+      subtitle: Text('เพื่อเพิ่ม ราการอาหาร พร้อม ร้านอาหาร'),
+      onTap: () {
+        setState(() {
+          currentWidget = AddFood();
         });
         Navigator.of(context).pop();
       },
@@ -138,6 +157,7 @@ class _MyServiceState extends State<MyService> {
         children: <Widget>[
           myHeadDrawer(),
           menuShowListFood(),
+          menuAddFood(),
           menuInformation(),
           processSignOut(),
         ],
