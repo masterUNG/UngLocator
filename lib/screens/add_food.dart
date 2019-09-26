@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,33 +19,37 @@ class _AddFoodState extends State<AddFood> {
   final formKey = GlobalKey<FormState>();
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   String urlImage = '';
-  String nameFood, nameShop, address, detail, latString = '0', lngString = '0', namePost;
-  
+  String nameFood,
+      nameShop,
+      address,
+      detail,
+      latString = '0',
+      lngString = '0',
+      namePost;
 
   // Method
- @override
- void initState() { 
-   super.initState();
-   findLocation();
- }
+  @override
+  void initState() {
+    super.initState();
+    findLocation();
+  }
 
-  Future<void> findLocation()async{
+  Future<void> findLocation() async {
     LocationData currentLocation = await locationData();
     setState(() {
       latString = currentLocation.latitude.toString();
-    lngString = currentLocation.longitude.toString();
+      lngString = currentLocation.longitude.toString();
     });
   }
 
-  Future<LocationData> locationData()async{
+  Future<LocationData> locationData() async {
     Location location = Location();
     try {
       return await location.getLocation();
     } on PlatformException catch (e) {
       print('Location Error ==> ${e.code}');
     }
-  } 
-
+  }
 
   Widget nameFoodText() {
     Color color = Colors.purpleAccent;
@@ -227,17 +232,42 @@ class _AddFoodState extends State<AddFood> {
     int randInt = Random().nextInt(1000);
     String nameImage = 'food$randInt.jpg';
 
-    StorageReference storageReference = firebaseStorage.ref().child('ImageFood/$nameImage');
+    StorageReference storageReference =
+        firebaseStorage.ref().child('ImageFood/$nameImage');
     StorageUploadTask storageUploadTask = storageReference.putFile(file);
 
-    urlImage = await (await storageUploadTask.onComplete).ref.getDownloadURL();
-    print('urlImage = $urlImage');
-    
+    await (await storageUploadTask.onComplete)
+        .ref
+        .getDownloadURL()
+        .then((response) {
+      urlImage = response;
+      print('urlImage = $urlImage');
+      uploadDataThread();
+    });
   }
 
-  Future<void> findURL() async {}
+  Future<void> uploadDataThread() async {
+    Map<String, dynamic> map = Map();
+    map['NameFood'] = nameFood;
+    map['NameShop'] = nameShop;
+    map['Address'] = address;
+    map['Detail'] = detail;
+    map['Lat'] = latString;
+    map['Lng'] = lngString;
+    map['PathURL'] = urlImage;
+    map['PostBy'] = 'May';
+    map['TimeOpenClose'] = '9.00 - 21.00';
 
-  Future<void> uploadDataThread() async {}
+    Firestore firestore = Firestore.instance;
+    await firestore
+        .collection('Food')
+        .document()
+        .setData(map)
+        .then((response) {
+          print('Success Upload Data');
+          myAlert('บันทึกข้อมูล สำเร็จแล้ว คะ');
+        });
+  }
 
   void myAlert(String message) {
     showDialog(
