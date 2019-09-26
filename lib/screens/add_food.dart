@@ -2,8 +2,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:location/location.dart';
 
 class AddFood extends StatefulWidget {
   @override
@@ -16,9 +18,34 @@ class _AddFoodState extends State<AddFood> {
   final formKey = GlobalKey<FormState>();
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   String urlImage = '';
+  String nameFood, nameShop, address, detail, latString = '0', lngString = '0', namePost;
   
 
   // Method
+ @override
+ void initState() { 
+   super.initState();
+   findLocation();
+ }
+
+  Future<void> findLocation()async{
+    LocationData currentLocation = await locationData();
+    setState(() {
+      latString = currentLocation.latitude.toString();
+    lngString = currentLocation.longitude.toString();
+    });
+  }
+
+  Future<LocationData> locationData()async{
+    Location location = Location();
+    try {
+      return await location.getLocation();
+    } on PlatformException catch (e) {
+      print('Location Error ==> ${e.code}');
+    }
+  } 
+
+
   Widget nameFoodText() {
     Color color = Colors.purpleAccent;
     return TextFormField(
@@ -40,7 +67,9 @@ class _AddFoodState extends State<AddFood> {
           return null;
         }
       },
-      onSaved: (String value) {},
+      onSaved: (String value) {
+        nameFood = value.trim();
+      },
     );
   }
 
@@ -65,7 +94,9 @@ class _AddFoodState extends State<AddFood> {
           return null;
         }
       },
-      onSaved: (String value) {},
+      onSaved: (String value) {
+        nameShop = value.trim();
+      },
     );
   }
 
@@ -92,7 +123,9 @@ class _AddFoodState extends State<AddFood> {
           return null;
         }
       },
-      onSaved: (String value) {},
+      onSaved: (String value) {
+        address = value.trim();
+      },
     );
   }
 
@@ -119,7 +152,9 @@ class _AddFoodState extends State<AddFood> {
           return null;
         }
       },
-      onSaved: (String value) {},
+      onSaved: (String value) {
+        detail = value.trim();
+      },
     );
   }
 
@@ -153,14 +188,14 @@ class _AddFoodState extends State<AddFood> {
 
   Widget showLat() {
     return ListTile(
-      title: Text('13.1234567'),
+      title: Text(latString),
       subtitle: Text('ละติจูด'),
     );
   }
 
   Widget showLng() {
     return ListTile(
-      title: Text('100.1234567'),
+      title: Text(lngString),
       subtitle: Text('ลองติจูด'),
     );
   }
