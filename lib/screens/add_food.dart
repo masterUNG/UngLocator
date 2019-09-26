@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AddFood extends StatefulWidget {
   @override
@@ -12,6 +14,9 @@ class _AddFoodState extends State<AddFood> {
   // Explicit
   File file;
   final formKey = GlobalKey<FormState>();
+  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  String urlImage = '';
+  
 
   // Method
   Widget nameFoodText() {
@@ -173,7 +178,7 @@ class _AddFoodState extends State<AddFood> {
               myAlert('ยั่งไม่ได้ เลือกรูปภาพอาหาร คะ');
             } else {
               // upload
-              
+              uploadImageThread();
             }
           } else {
             myAlert('กรอกข้อมูล ไม่ครบ คะ');
@@ -182,6 +187,22 @@ class _AddFoodState extends State<AddFood> {
       ),
     );
   }
+
+  Future<void> uploadImageThread() async {
+    int randInt = Random().nextInt(1000);
+    String nameImage = 'food$randInt.jpg';
+
+    StorageReference storageReference = firebaseStorage.ref().child('ImageFood/$nameImage');
+    StorageUploadTask storageUploadTask = storageReference.putFile(file);
+
+    urlImage = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    print('urlImage = $urlImage');
+    
+  }
+
+  Future<void> findURL() async {}
+
+  Future<void> uploadDataThread() async {}
 
   void myAlert(String message) {
     showDialog(
